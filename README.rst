@@ -6,9 +6,6 @@ Synthesizer
 Windows MSVC Command Line Synthesizer
 -------------------------------------
 
-.. contents:: Overview
-   :depth: 3
-
 ============
 Introduction
 ============
@@ -30,5 +27,5 @@ taking advantage of those yet though.
 - Are intuitive
 - And simple too
 
-:Compile: ``> cl /EHsc main.cpp``
-:Run:  ``> cl /EHsc main.cpp``
+Compile: ``> cl /EHsc main.cpp``
+Run: ``> cl /EHsc main.cpp``
