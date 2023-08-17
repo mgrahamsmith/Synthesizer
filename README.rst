@@ -1,9 +1,15 @@
+=================
 My Project Readme
 =================
 
+-------------------------
 Clever subtitle goes here
 -------------------------
 
+.. contents:: Overview
+   :depth: 3
+
+============
 Introduction
 ============
 
