@@ -27,5 +27,5 @@ taking advantage of those yet though.
 - Are intuitive
 - And simple too
 
-Compile: ``> cl /EHsc main.cpp``
-Run: ``> cl /EHsc main.cpp``
+cl /EHsc main.cpp
+cl /EHsc main.cpp
