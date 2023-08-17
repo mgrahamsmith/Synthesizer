@@ -6,10 +6,6 @@ Synthesizer
 Windows MSVC Command Line Synthesizer
 -------------------------------------
 
-Inspired by
-.. _link: https://www.youtube.com/@javidx9
-.. _link: https://www.youtube.com/watch?v=tgamhuQnOkM
-
 .. contents:: Overview
    :depth: 3
 
