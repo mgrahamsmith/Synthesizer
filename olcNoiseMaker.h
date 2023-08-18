@@ -177,9 +177,22 @@ public:
 		int nDeviceCount = waveOutGetNumDevs();
 		vector<wstring> sDevices;
 		WAVEOUTCAPS woc;
+
+		// The WAVEOUTCAPS structure describes the capabilities of a waveform-audio output device.
+		// I'm getting a compiler error for vector<wstring>.push_back() for a bad conversion
+		// WAVEOUTCAPS.szPname is type TCHAR
+		// Make a conversion here
+		
+		wstring tmpSzPname(&woc.szPname[0], &woc.szPname[sizeof(woc.szPname)]);
+
+		// std::wcout << "        woc.szPname: " << woc.szPname << endl;
+		// std::cout  << "sizeof(woc.szPname): " << sizeof(woc.szPname) << endl;
+		// std::wcout << "         tmpSzPname: " << tmpSzPname  << endl;
+
 		for (int n = 0; n < nDeviceCount; n++)
 			if (waveOutGetDevCaps(n, &woc, sizeof(WAVEOUTCAPS)) == S_OK)
-				sDevices.push_back(woc.szPname);
+				sDevices.push_back(tmpSzPname);
+		
 		return sDevices;
 	}
 

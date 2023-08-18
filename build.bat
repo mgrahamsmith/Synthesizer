@@ -2,7 +2,7 @@
 @echo off
 if exist build (
   @echo on
-  rmdir /s build
+  rmdir /s /q build
 )
 
 :: Leave project root, create and enter build folder 
@@ -11,7 +11,7 @@ cd build
 
 :: Compiler the project
 @echo on
-cl /EHsc ..\main.cpp
+cl /EHsc ..\main.cpp winmm.lib
 
 :: Exit build folder back to project root.
 cd ..
