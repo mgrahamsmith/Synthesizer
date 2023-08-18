@@ -10,6 +10,7 @@ Windows MSVC Command Line Synthesizer
 .. _video: https://www.google.com
 .. _javidx9: https://www.youtube.com/@javidx9
 .. _Developer Command Prompt for VS 2022: https://learn.microsoft.com/en-us/visualstudio/ide/reference/command-prompt-powershell?view=vs-2022
+.. _OLC Synth Github Project: https://github.com/OneLoneCoder/synth/tree/master
 
 
 Introduction
@@ -18,7 +19,8 @@ Introduction
 A simple command line keyboard audio synthesizer, written in C++, and compiled 
 with MSVC.
 
-This video_ by javidx9_ inspired the project.
+This video_ by javidx9_ inspired the project.  See the `OLC Synth Github Project`_ 
+for reference.
 
 
 Building and Running
@@ -26,6 +28,6 @@ Building and Running
 
 Using `Developer Command Prompt for VS 2022`_.
 
-Build: ``> cl /EHsc main.cpp``
+Build: ``> build.bat``
 
-Run:  ``> cl /EHsc main.cpp``  
+Run:  ``> run.bat``  
