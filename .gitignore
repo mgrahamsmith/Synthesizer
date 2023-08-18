@@ -1,3 +1,5 @@
 # MS CL Files
 *.obj
 *.exe
+
+.vscode/*
