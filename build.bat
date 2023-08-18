@@ -11,7 +11,7 @@ cd build
 
 :: Compiler the project
 @echo on
-cl /EHsc ..\main.cpp winmm.lib
+cl /EHsc  ..\main.cpp winmm.lib
 
 :: Exit build folder back to project root.
 cd ..

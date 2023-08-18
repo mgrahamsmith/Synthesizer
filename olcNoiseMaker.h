@@ -172,26 +172,46 @@ public:
 	
 
 public:
+
+	std::wstring s2ws(const std::string& str)
+	{
+		int size_needed = MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), NULL, 0);
+		std::wstring wstrTo( size_needed, 0 );
+		MultiByteToWideChar(CP_UTF8, 0, &str[0], (int)str.size(), &wstrTo[0], size_needed);
+		return wstrTo;
+	}
+
 	static vector<wstring> Enumerate()
 	{
 		int nDeviceCount = waveOutGetNumDevs();
 		vector<wstring> sDevices;
 		WAVEOUTCAPS woc;
 
-		// The WAVEOUTCAPS structure describes the capabilities of a waveform-audio output device.
-		// I'm getting a compiler error for vector<wstring>.push_back() for a bad conversion
-		// WAVEOUTCAPS.szPname is type TCHAR
-		// Make a conversion here
-		
-		wstring tmpSzPname(&woc.szPname[0], &woc.szPname[sizeof(woc.szPname)]);
+		char s[32] = "A temp string";
 
-		// std::wcout << "        woc.szPname: " << woc.szPname << endl;
-		// std::cout  << "sizeof(woc.szPname): " << sizeof(woc.szPname) << endl;
-		// std::wcout << "         tmpSzPname: " << tmpSzPname  << endl;
+		cout << "----------------------------------------" << endl;
+
+	    cout  << "typeid(s): " << typeid(s).name() << endl;
+	    wcout << "        s: " << s << endl;
+
+ 		wstring tmpStr( &s[0], &s[strlen(s)] );
+
+		cout << "----------------------------------------" << endl;
+
+	    cout  << "typeid(tmpStr): " << typeid(tmpStr).name() << endl;
+	    wcout << "        tmpStr: " << tmpStr << endl;
+		
+		cout << "----------------------------------------" << endl;
 
 		for (int n = 0; n < nDeviceCount; n++)
 			if (waveOutGetDevCaps(n, &woc, sizeof(WAVEOUTCAPS)) == S_OK)
-				sDevices.push_back(tmpSzPname);
+				sDevices.push_back(tmpStr);
+
+		cout  << "typeid(woc.szPname): " << typeid(woc.szPname).name() << endl;
+		wcout << "        woc.szPname: " << woc.szPname << endl;
+
+		
+		cout << "----------------------------------------" << endl;
 		
 		return sDevices;
 	}
