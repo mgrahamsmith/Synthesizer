@@ -2,5 +2,11 @@
 *.obj
 *.exe
 
+# Visual Studio
+.vs/*
+Debug/*
+x64/*
+
+# Other
 .vscode/*
 build/*

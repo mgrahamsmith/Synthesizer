@@ -3,37 +3,47 @@ using namespace std;
 
 #include "olcNoiseMaker.h"
 
+atomic<double>  dFrequencyOutput = 0.0;
+
 double MakeNoise(double dTime)
 {
-    return 0.5 * sin(440.0 * 2 * 3.14159 * dTime);
+	double dOutput = 1.0 * sin(220.0 * 2 * 3.14159 * dTime);
+
+	if (dOutput > 0.0)
+		return 0.2;
+	else
+		return -0.2;
+
+	return 0.3 * sin(220.0 * 2 * 3.14159 * dTime);
 }
 
 int main()
 {
-    wcout << "Synthesizer Part 1" << endl;
+	wcout << "Synthesizer Console App" << endl;
 
-    // Get all sound hardware
-    vector<wstring> devices = olcNoiseMaker<short>::Enumerate();
+	// Get all sound hardware
+	vector<wstring> devices = olcNoiseMaker<short>::Enumerate();
 
-    // Display findings
-    for (auto d : devices)
-    {
-        wcout << "Found Output Device:" << d << endl;
-    }
+	// Display findings
+	for (auto d : devices) wcout << "Found Output Device:" << d << endl;
 
-    // Create sound machine!!
-    // sound( devices, sample rate, channels, 8, 512)
-    //   channels: mono vs. stereo.  Assume 1 speaker.
-    //   8, 512: latency management.  Reduce delay between key stroke and sound.
-    olcNoiseMaker<short> sound(devices[0], 44100, 1, 8, 512);
+	// Create sound machine!
+	olcNoiseMaker<short> sound (devices[0], 44100, 1, 8, 512);
 
-    // Link noise function with sound machine
-    sound.SetUserFunction(MakeNoise);
+	// Link noise function with sound machine
+	sound.SetUserFunction(MakeNoise);
 
-    while (1)
-    {
 
-    }
+	while (1)
+	{
+		// Add a keyboard
 
-    return 0;
+		if (GetAsyncKeyState('A') & 0x8000)
+		{
+
+		}
+	}
+
+
+	return 0;
 }
