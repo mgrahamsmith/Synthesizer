@@ -26,8 +26,5 @@ for reference.
 Building and Running
 ================================================================================
 
-Using `Developer Command Prompt for VS 2022`_.
-
-Build: ``> build.bat``
-
-Run:  ``> run.bat``  
+Open Synthesizer.sln in Visual Sutdio 2022.  Make sure `x86` is selected in the drop down 
+just to the left of the "Local Windows Debugger" button.
