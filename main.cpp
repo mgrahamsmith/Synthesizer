@@ -16,8 +16,8 @@ double MakeNoise(double dTime)
 	// 	return -0.1;
 
 	// Sine Wave
-	double dOutput = 1.0 * sin(dFrequencyOutput * 2 * 3.14159 * dTime);
-	return dOutput;
+	double dOutput = 1.0 * (sin(dFrequencyOutput * 2 * 3.14159 * dTime) + sin((dFrequencyOutput + 20.0) * 2 * 3.14159 * dTime));
+	return dOutput * 0.4;
 }
 
 int main()
@@ -36,7 +36,7 @@ int main()
 	// Link noise function with sound machine
 	sound.SetUserFunction(MakeNoise);
 
-	double dOctaveBaseFrequency = 220.0; // A3
+	double dOctaveBaseFrequency = 220.0; // A2
 	double d12thRootOf2 = pow(2.0, 1.0 / 12.0);
 
 	while (1)
