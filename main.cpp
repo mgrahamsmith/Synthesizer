@@ -7,14 +7,17 @@ atomic<double>  dFrequencyOutput = 0.0;
 
 double MakeNoise(double dTime)
 {
-	double dOutput = 1.0 * sin(220.0 * 2 * 3.14159 * dTime);
+	// Square wave
+	// double dOutput = 1.0 * sin(dFrequencyOutput * 2 * 3.14159 * dTime);
+	// 
+	// if (dOutput > 0.0)
+	// 	return 0.1;
+	// else
+	// 	return -0.1;
 
-	if (dOutput > 0.0)
-		return 0.2;
-	else
-		return -0.2;
-
-	return 0.3 * sin(220.0 * 2 * 3.14159 * dTime);
+	// Sine Wave
+	double dOutput = 1.0 * sin(dFrequencyOutput * 2 * 3.14159 * dTime);
+	return dOutput;
 }
 
 int main()
@@ -33,14 +36,26 @@ int main()
 	// Link noise function with sound machine
 	sound.SetUserFunction(MakeNoise);
 
+	double dOctaveBaseFrequency = 220.0; // A3
+	double d12thRootOf2 = pow(2.0, 1.0 / 12.0);
 
 	while (1)
 	{
-		// Add a keyboard
+		// Add a keyboard like a piano
 
-		if (GetAsyncKeyState('A') & 0x8000)
+		bool bKeyPressed = false;
+		for (int k = 0; k < 15; k++)
 		{
+			if (GetAsyncKeyState((unsigned char)("ZSXCFVGBNJMK\xbc\xbe"[k])) & 0x8000)
+			{
+				dFrequencyOutput = dOctaveBaseFrequency * pow(d12thRootOf2, k);
+				bKeyPressed = true;
+			}
+		}
 
+		if (!bKeyPressed)
+		{
+			dFrequencyOutput = 0;
 		}
 	}
 
