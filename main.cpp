@@ -21,7 +21,7 @@ double osc(double dHertz, double dTime, int nType)
 		return sin(w(dHertz) * dTime) > 0.0 ? 1.0 : -1.0;
 
 	case 2: // triangle wave
-		return asin(sin(w(dHertz) * dTime) * 2.0 / PI);
+		return asin(sin(w(dHertz) * dTime)) * (2.0 / PI);
 
 	default:
 		return 0.0; // No sound output
@@ -34,7 +34,7 @@ atomic<double>  dFrequencyOutput = 0.0;
 // Returns amplitude (-1.0 to +1.0) as a function of time
 double MakeNoise(double dTime)
 {
-	double dOutput = osc(dFrequencyOutput, dTime, 0);
+	double dOutput = osc(dFrequencyOutput, dTime, 2);
 
 	return dOutput * 0.4; // Master Volume
 }
