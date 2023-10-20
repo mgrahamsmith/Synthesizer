@@ -14,14 +14,29 @@ double osc(double dHertz, double dTime, int nType)
 
 	switch (nType)
 	{
-	case 0: // sine wave
+	case 0: // Sine wave
 		return sin(w(dHertz) * dTime);
 
-	case 1: // square wave
+	case 1: // Square wave
 		return sin(w(dHertz) * dTime) > 0.0 ? 1.0 : -1.0;
 
-	case 2: // triangle wave
+	case 2: // Triangle wave
 		return asin(sin(w(dHertz) * dTime)) * (2.0 / PI);
+
+	case 3: // Saw wave (analogue / warm / slow)
+	{
+		double dOutput = 0;
+
+		for (double n = 1.0; n < 100.0; n++)
+			dOutput += (sin(n * w(dHertz) * dTime)) / n;
+		
+		return dOutput* (2.0 / PI);
+	}
+	case 4: // Saw wave (optimized / harsh / fast)
+		return (2.0 / PI) * (dHertz * PI * fmod(dTime, 1.0 / dHertz) - (PI / 2.0));
+
+	case 5: // Pseudo Random Noise
+		return 2.0 * ((double)rand() / (double)RAND_MAX) - 1.0;
 
 	default:
 		return 0.0; // No sound output
@@ -34,7 +49,7 @@ atomic<double>  dFrequencyOutput = 0.0;
 // Returns amplitude (-1.0 to +1.0) as a function of time
 double MakeNoise(double dTime)
 {
-	double dOutput = osc(dFrequencyOutput, dTime, 2);
+	double dOutput = osc(dFrequencyOutput, dTime, 3);
 
 	return dOutput * 0.4; // Master Volume
 }
