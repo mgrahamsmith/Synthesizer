@@ -3,21 +3,40 @@ using namespace std;
 
 #include "olcNoiseMaker.h"
 
+// Converts fequency (Hz) to angular velocity
+double w(double dHertz)
+{
+	return dHertz * 2.0 * PI;
+}
+
+double osc(double dHertz, double dTime, int nType)
+{
+
+	switch (nType)
+	{
+	case 0: // sine wave
+		return sin(w(dHertz) * dTime);
+
+	case 1: // square wave
+		return sin(w(dHertz) * dTime) > 0.0 ? 1.0 : -1.0;
+
+	case 2: // triangle wave
+		return asin(sin(w(dHertz) * dTime) * 2.0 / PI);
+
+	default:
+		return 0.0; // No sound output
+	}
+}
+
 atomic<double>  dFrequencyOutput = 0.0;
 
+// Function used by olcNoiseMaker to generate sound waves
+// Returns amplitude (-1.0 to +1.0) as a function of time
 double MakeNoise(double dTime)
 {
-	// Square wave
-	// double dOutput = 1.0 * sin(dFrequencyOutput * 2 * 3.14159 * dTime);
-	// 
-	// if (dOutput > 0.0)
-	// 	return 0.1;
-	// else
-	// 	return -0.1;
+	double dOutput = osc(dFrequencyOutput, dTime, 0);
 
-	// Sine Wave
-	double dOutput = 1.0 * (sin(dFrequencyOutput * 2 * 3.14159 * dTime) + sin((dFrequencyOutput + 20.0) * 2 * 3.14159 * dTime));
-	return dOutput * 0.4;
+	return dOutput * 0.4; // Master Volume
 }
 
 int main()
