@@ -43,16 +43,101 @@ double osc(double dHertz, double dTime, int nType)
 	}
 }
 
-atomic<double>  dFrequencyOutput = 0.0;
+struct sEnvelopeADSR
+{
+	double dAttackTime;
+	double dDecayTime;
+	double dReleaseTime;
+
+	double dSustainAmplitude;
+	double dStartAmplitude;
+
+	double dTriggerOnTime;
+	double dTriggerOffTime;
+
+	bool bNoteOn;
+
+	sEnvelopeADSR()
+	{
+		dAttackTime = 0.100;
+		dDecayTime = 0.01;
+		dStartAmplitude = 1.0;
+		dSustainAmplitude = 0.8;
+		dReleaseTime = 0.200;
+		dTriggerOnTime = 0.0;
+		dTriggerOffTime = 0.0;
+		bNoteOn = false;
+	}
+
+	double GetAmplitude(double dTime)
+	{
+		double dAmplitude = 0.0;
+		double dLifeTime = dTime - dTriggerOnTime;
+
+		if (bNoteOn)
+		{
+			// ADS
+
+			// Attack
+			if (dLifeTime <= dAttackTime)
+				dAmplitude = (dLifeTime / dAttackTime) * dStartAmplitude;
+			
+			// Decay
+			if (dLifeTime > dAttackTime && dLifeTime <= (dAttackTime + dDecayTime))
+				dAmplitude = ((dLifeTime - dAttackTime) / dDecayTime) * (dSustainAmplitude - dStartAmplitude) + dStartAmplitude;
+		
+			// Sustain
+			if (dLifeTime > (dAttackTime + dDecayTime))
+				dAmplitude = dSustainAmplitude;
+		}
+		else
+		{
+			// Release
+			dAmplitude = ((dTime - dTriggerOffTime) / dReleaseTime) * (0.0 - dSustainAmplitude) + dSustainAmplitude;
+		}
+
+		// Epsilon value check.  Stop low signals (amplitude near 0.0) from coming out of the speaker.
+		if (dAmplitude <= 0.0001)
+		{
+			dAmplitude = 0.0;
+		}
+
+		return dAmplitude;
+	}
+
+	void NoteOn(double dTimeOn)
+	{
+		dTriggerOnTime = dTimeOn;
+		bNoteOn = true;
+	}
+
+	void NoteOff(double dTimeOff)
+	{
+		dTriggerOffTime = dTimeOff;
+		bNoteOn = false;
+	}
+};
+
+// Global synthesizer variables
+atomic<double>  dFrequencyOutput = 0.0;			// dominant output frequency of instrument, i.e. the note
+double dOctaveBaseFrequency = 110.0; // A2		// frequency of octave represented by ... ?
+double d12thRootOf2 = pow(2.0, 1.0 / 12.0);     // assuming western 12 notes per octave
+sEnvelopeADSR envelope;							// amplitude modulation of output to 
+
 
 // Function used by olcNoiseMaker to generate sound waves
 // Returns amplitude (-1.0 to +1.0) as a function of time
 double MakeNoise(double dTime)
 {
-	double dOutput = osc(dFrequencyOutput, dTime, 3);
+	double dOutput = envelope.GetAmplitude(dTime) *
+		(
+			+osc(dFrequencyOutput * 0.5, dTime, 3)
+			+ osc(dFrequencyOutput * 1.0, dTime, 1)
+		);
 
 	return dOutput * 0.4; // Master Volume
 }
+
 
 int main()
 {
@@ -73,26 +158,37 @@ int main()
 	double dOctaveBaseFrequency = 110.0; // A2
 	double d12thRootOf2 = pow(2.0, 1.0 / 12.0);
 
+	int nCurrentKey = -1;
+	bool bKeyPressed = false;
 	while (1)
 	{
-		// Add a keyboard like a piano
-
-		bool bKeyPressed = false;
+		bKeyPressed = false;
 		for (int k = 0; k < 15; k++)
 		{
-			if (GetAsyncKeyState((unsigned char)("ZSXCFVGBNJMK\xbc\xbe"[k])) & 0x8000)
+			if (GetAsyncKeyState((unsigned char)("ZSXCFVGBNJMK\xbcL\xbe"[k])) & 0x8000)
 			{
-				dFrequencyOutput = dOctaveBaseFrequency * pow(d12thRootOf2, k);
+				if (nCurrentKey != k)
+				{
+					dFrequencyOutput = dOctaveBaseFrequency * pow(d12thRootOf2, k);
+					envelope.NoteOn(sound.GetTime());
+					wcout << "\rNote On : " << sound.GetTime() << "s " << dFrequencyOutput << " Hz";
+					nCurrentKey = k;
+				}
+
 				bKeyPressed = true;
 			}
 		}
 
 		if (!bKeyPressed)
 		{
-			dFrequencyOutput = 0;
+			if (nCurrentKey != -1)
+			{
+				wcout << "\rNote Off: " << sound.GetTime() << "s ";
+				envelope.NoteOff(sound.GetTime());
+				nCurrentKey = -1;
+			}
 		}
 	}
-
 
 	return 0;
 }
