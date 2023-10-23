@@ -14,6 +14,9 @@ for reference.
 .. _OLC Synth Github Project: https://github.com/OneLoneCoder/synth/tree/master
 
 
+.. contents::
+
+
 Building and Running
 --------------------------------------------------------------------------------
 
@@ -23,3 +26,11 @@ Instructions for building and running the program:
 #. Make sure `x86` is selected in the drop down just to the left of the "Local Windows Debugger" button.
 
 .. _Synthesizer.sln: ./Synthesizer.sln
+
+
+Other Documentation
+--------------------------------------------------------------------------------
+
+* `TODO Items <docs/todo.rst>`_
+
+
