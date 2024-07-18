@@ -59,11 +59,11 @@ struct sEnvelopeADSR
 
 	sEnvelopeADSR()
 	{
-		dAttackTime = 0.100;
-		dDecayTime = 0.01;
+		dAttackTime = 0.2;
+		dDecayTime = 0.5;
 		dStartAmplitude = 1.0;
 		dSustainAmplitude = 0.8;
-		dReleaseTime = 0.200;
+		dReleaseTime = 0.1;
 		dTriggerOnTime = 0.0;
 		dTriggerOffTime = 0.0;
 		bNoteOn = false;
@@ -131,17 +131,31 @@ double MakeNoise(double dTime)
 {
 	double dOutput = envelope.GetAmplitude(dTime) *
 		(
-			+osc(dFrequencyOutput * 0.5, dTime, 3)
-			+ osc(dFrequencyOutput * 1.0, dTime, 1)
+			+ osc(dFrequencyOutput * 0.5, dTime, 3)
 		);
 
 	return dOutput * 0.4; // Master Volume
+}
+
+int printKeyboard()
+{
+	wcout << "_________________________________________\n"
+		  << "|  | |  |  | | | |  |  | | | | | |  |  | \n"
+		  << "|  |S|  |  |F| |G|  |  |J| |K| |L|  |  | \n"
+		  << "|  |_|  |  |_| |_|  |  |_| |_| |_|  |  |_\n"
+		  << "|   |   |   |   |   |   |   |   |   |   |\n"
+		  << "| Z | X | C | V | B | N | M | , | . | / |\n"
+		  << "|___|___|___|___|___|___|___|___|___|___|\n\n";
+
+	return 0;
 }
 
 
 int main()
 {
 	wcout << "Synthesizer Console App" << endl;
+
+	printKeyboard();
 
 	// Get all sound hardware
 	vector<wstring> devices = olcNoiseMaker<short>::Enumerate();
@@ -163,9 +177,9 @@ int main()
 	while (1)
 	{
 		bKeyPressed = false;
-		for (int k = 0; k < 15; k++)
+		for (int k = 0; k < 16; k++)
 		{
-			if (GetAsyncKeyState((unsigned char)("ZSXCFVGBNJMK\xbcL\xbe"[k])) & 0x8000)
+			if (GetAsyncKeyState((unsigned char)("ZSXCFVGBNJMK\xbcL\xbe\xbf"[k])) & 0x8000)
 			{
 				if (nCurrentKey != k)
 				{
