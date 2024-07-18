@@ -15,7 +15,8 @@ double osc(double dHertz, double dTime, int nType)
 	switch (nType)
 	{
 	case 0: // Sine wave
-		return sin(w(dHertz) * dTime);
+		// return sin(w(dHertz) * dTime);
+		return sin(w(dHertz) * dTime + 0.5 * dHertz * sin(w(1.0) * dTime));
 
 	case 1: // Square wave
 		return sin(w(dHertz) * dTime) > 0.0 ? 1.0 : -1.0;
@@ -131,7 +132,7 @@ double MakeNoise(double dTime)
 {
 	double dOutput = envelope.GetAmplitude(dTime) *
 		(
-			+ osc(dFrequencyOutput * 0.5, dTime, 3)
+			+ osc(dFrequencyOutput * 0.5, dTime, 0)
 		);
 
 	return dOutput * 0.4; // Master Volume
@@ -169,7 +170,7 @@ int main()
 	// Link noise function with sound machine
 	sound.SetUserFunction(MakeNoise);
 
-	double dOctaveBaseFrequency = 110.0; // A2
+	double dOctaveBaseFrequency = 220.0; // A2
 	double d12thRootOf2 = pow(2.0, 1.0 / 12.0);
 
 	int nCurrentKey = -1;
