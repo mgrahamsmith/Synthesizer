@@ -9,22 +9,31 @@ double w(double dHertz)
 	return dHertz * 2.0 * PI;
 }
 
-double osc(double dHertz, double dTime, int nType)
+enum class OSC {
+	SINE,
+	TRIANGLE,
+	SQUARE,
+	SAW_ANA,
+	SAW_DIG,
+	NOISE
+};
+
+double osc(double dHertz, double dTime, OSC nType)
 {
 
 	switch (nType)
 	{
-	case 0: // Sine wave
+	case OSC::SINE: // Sine wave
 		// return sin(w(dHertz) * dTime);
 		return sin(w(dHertz) * dTime + 0.5 * dHertz * sin(w(1.0) * dTime));
 
-	case 1: // Square wave
-		return sin(w(dHertz) * dTime) > 0.0 ? 1.0 : -1.0;
-
-	case 2: // Triangle wave
+	case OSC::TRIANGLE: // Triangle wave
 		return asin(sin(w(dHertz) * dTime)) * (2.0 / PI);
 
-	case 3: // Saw wave (analogue / warm / slow)
+	case OSC::SQUARE: // Square wave
+		return sin(w(dHertz) * dTime) > 0.0 ? 1.0 : -1.0;
+
+	case OSC::SAW_ANA: // Saw wave (analogue / warm / slow)
 	{
 		double dOutput = 0;
 
@@ -33,10 +42,10 @@ double osc(double dHertz, double dTime, int nType)
 		
 		return dOutput* (2.0 / PI);
 	}
-	case 4: // Saw wave (optimized / harsh / fast)
+	case OSC::SAW_DIG: // Saw wave (optimized / harsh / fast)
 		return (2.0 / PI) * (dHertz * PI * fmod(dTime, 1.0 / dHertz) - (PI / 2.0));
 
-	case 5: // Pseudo Random Noise
+	case OSC::NOISE: // Pseudo Random Noise
 		return 2.0 * ((double)rand() / (double)RAND_MAX) - 1.0;
 
 	default:
@@ -132,7 +141,7 @@ double MakeNoise(double dTime)
 {
 	double dOutput = envelope.GetAmplitude(dTime) *
 		(
-			+ osc(dFrequencyOutput * 0.5, dTime, 0)
+			+ osc(dFrequencyOutput * 0.5, dTime, OSC::SQUARE)
 		);
 
 	return dOutput * 0.4; // Master Volume
