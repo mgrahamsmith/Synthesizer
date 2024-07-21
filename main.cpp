@@ -96,31 +96,34 @@ namespace synth
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Multi-Function Oscillator
-	const int OSC_SINE = 0;
-	const int OSC_SQUARE = 1;
-	const int OSC_TRIANGLE = 2;
-	const int OSC_SAW_ANA = 3;
-	const int OSC_SAW_DIG = 4;
-	const int OSC_NOISE = 5;
+	enum class OSC
+	{
+		SINE,
+	    SQUARE,
+	    TRIANGLE,
+	    SAW_ANA,
+	    SAW_DIG,
+	    NOISE
+	};
 
-	FTYPE osc(const FTYPE dTime, const FTYPE dHertz, const int nType = OSC_SINE,
+	FTYPE osc(const FTYPE dTime, const FTYPE dHertz, OSC nType = OSC::SINE,
 		const FTYPE dLFOHertz = 0.0, const FTYPE dLFOAmplitude = 0.0, FTYPE dCustom = 50.0)
 	{
 
-		FTYPE dFreq = w(dHertz) * dTime + dLFOAmplitude * dHertz * (sin(w(dLFOHertz) * dTime));// osc(dTime, dLFOHertz, OSC_SINE);
+		FTYPE dFreq = w(dHertz) * dTime + dLFOAmplitude * dHertz * (sin(w(dLFOHertz) * dTime));// osc(dTime, dLFOHertz, OSC::SINE);
 
 		switch (nType)
 		{
-		case OSC_SINE: // Sine wave bewteen -1 and +1
+		case OSC::SINE: // Sine wave bewteen -1 and +1
 			return sin(dFreq);
 
-		case OSC_SQUARE: // Square wave between -1 and +1
+		case OSC::SQUARE: // Square wave between -1 and +1
 			return sin(dFreq) > 0 ? 1.0 : -1.0;
 
-		case OSC_TRIANGLE: // Triangle wave between -1 and +1
+		case OSC::TRIANGLE: // Triangle wave between -1 and +1
 			return asin(sin(dFreq)) * (2.0 / PI);
 
-		case OSC_SAW_ANA: // Saw wave (analogue / warm / slow)
+		case OSC::SAW_ANA: // Saw wave (analogue / warm / slow)
 		{
 			FTYPE dOutput = 0.0;
 			for (FTYPE n = 1.0; n < dCustom; n++)
@@ -128,10 +131,10 @@ namespace synth
 			return dOutput * (2.0 / PI);
 		}
 
-		case OSC_SAW_DIG:
+		case OSC::SAW_DIG:
 			return (2.0 / PI) * (dHertz * PI * fmod(dTime, 1.0 / dHertz) - (PI / 2.0));
 
-		case OSC_NOISE:
+		case OSC::NOISE:
 			return 2.0 * ((FTYPE)rand() / (FTYPE)RAND_MAX) - 1.0;
 
 		default:
@@ -252,7 +255,7 @@ namespace synth
 			if (dAmplitude <= 0.0) bNoteFinished = true;
 
 			FTYPE dSound =
-				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id + 12), synth::OSC_SINE, 5.0, 0.001)
+				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id + 12), synth::OSC::SINE, 5.0, 0.001)
 				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + 24))
 				+ 0.25 * synth::osc(n.on - dTime, synth::scale(n.id + 36));
 
@@ -279,7 +282,7 @@ namespace synth
 			if (dAmplitude <= 0.0) bNoteFinished = true;
 
 			FTYPE dSound =
-				+1.00 * synth::osc(n.on - dTime, synth::scale(n.id), synth::OSC_SQUARE, 5.0, 0.001)
+				+1.00 * synth::osc(n.on - dTime, synth::scale(n.id), synth::OSC::SQUARE, 5.0, 0.001)
 				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + 12))
 				+ 0.25 * synth::osc(n.on - dTime, synth::scale(n.id + 24));
 
@@ -306,10 +309,10 @@ namespace synth
 			if (dAmplitude <= 0.0) bNoteFinished = true;
 
 			FTYPE dSound =
-				//+ 1.0  * synth::osc(n.on - dTime, synth::scale(n.id-12), synth::OSC_SAW_ANA, 5.0, 0.001, 100)
-				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id), synth::OSC_SQUARE, 5.0, 0.001)
-				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + 12), synth::OSC_SQUARE)
-				+ 0.05  * synth::osc(n.on - dTime, synth::scale(n.id + 24), synth::OSC_NOISE);
+				//+ 1.0  * synth::osc(n.on - dTime, synth::scale(n.id-12), synth::OSC::SAW_ANA, 5.0, 0.001, 100)
+				+ 1.00 * synth::osc(n.on - dTime, synth::scale(n.id), synth::OSC::SQUARE, 5.0, 0.001)
+				+ 0.50 * synth::osc(n.on - dTime, synth::scale(n.id + 12), synth::OSC::SQUARE)
+				+ 0.05  * synth::osc(n.on - dTime, synth::scale(n.id + 24), synth::OSC::NOISE);
 
 			return dAmplitude * dSound * dVolume;
 		}
